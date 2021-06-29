@@ -14,10 +14,5 @@ urlpatterns = [
     path('auth/token/', views.take_token),
     path('users/me/', views.UserMeViewSet.as_view({'get': 'list',
                                                    'patch': 'update_me'})),
-    # path('titles/<int:pk>/reviews/<int:review_id>/', views.ReviewViewSet.as_view({'get': 'list',
-    #                                                                               'patch': 'update'})),
-    # path('titles/<int:pk>/reviews/', views.ReviewViewSet.as_view({'get': 'list',
-    #                                                               'post': 'create'})),
-
     path('', include(router.urls)),
 ]

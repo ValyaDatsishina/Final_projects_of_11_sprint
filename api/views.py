@@ -1,12 +1,11 @@
 import uuid
 
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status, permissions
+from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import SearchFilter
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.core.mail import send_mail
@@ -159,59 +158,12 @@ class CommentsViewSet(viewsets.ModelViewSet):
     permission_classes = [AdminUserOnly, ]
 
     def get_queryset(self):
-        title_id = self.kwargs.get('title_id')
         review_id = self.kwargs.get('review_id')
-        queryset = Comments.objects.filter( review_id=review_id)
+        queryset = Comments.objects.filter(review_id=review_id)
         return queryset
 
     def perform_create(self, serializer):
-        title_id = self.kwargs.get('title_id')
         review_id = self.kwargs.get('review_id')
-        title = get_object_or_404(Titles, id=title_id)
         review = get_object_or_404(Review, id=review_id)
         serializer.save(author=self.request.user, review_id=review)
 
-
-# class ReviewViewSet(viewsets.ModelViewSet):
-#     queryset = Review.objects.all()
-#     serializer_class = ReviewSerializer
-#     permission_classes = [AdminUserOnly]
-#     pagination_class = PageNumberPagination
-#
-#     # def get_queryset(self):
-#     def list(self, request, pk, review_id=None):
-#         title = get_object_or_404(Titles, id=pk)
-#         if review_id is None:
-#             reviews = title.review
-#             serializer = self.serializer_class(reviews, many=True)
-#             return Response(serializer.data)
-#         review = get_object_or_404(self.queryset, title_id=title, id=review_id)
-#         serializer = self.serializer_class(review)
-#         return Response(serializer.data)
-#
-#     def create(self, request, pk):
-#         title = get_object_or_404(Titles, id=pk)
-#         serializer = self.serializer_class(data=request.data)
-#         if serializer.is_valid(raise_exception=True):
-#             serializer.save(author=self.request.user, title_id=title)
-#             return Response(serializer.data)
-#         return Response(serializer.errors)
-#
-#     def update(self, request, pk, review_id):
-#         title = get_object_or_404(Titles, id=pk)
-#         review = get_object_or_404(self.queryset, title_id=title, id=review_id)
-#         serializer = self.serializer_class(review, data=request.data)
-#         if request.user == review.author or request.user.role in ['admin', 'moderator']:
-#             if serializer.is_valid(raise_exception=True):
-#                 serializer.save(author=review.author, title_id=title)
-#                 return Response(serializer.data)
-#             return Response(status=status.HTTP_400_BAD_REQUEST)
-#         return Response(status=status.HTTP_403_FORBIDDEN)
-#
-#     def delete(self, request, pk, review_id):
-#         title = get_object_or_404(Titles, id=pk)
-#         review = get_object_or_404(self.queryset, title_id=title, id=review_id)
-#         if request.user == review.author or request.user.role in ['admin', 'moderator']:
-#             review.delete()
-#             return Response('Review removed', status=status.HTTP_204_NO_CONTENT)
-#         return Response(status=status.HTTP_403_FORBIDDEN)

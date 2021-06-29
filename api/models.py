@@ -68,7 +68,6 @@ class Titles(models.Model):
     description = models.TextField(max_length=300, blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, related_name="titles",
                                  blank=True, null=True)
-    # rating = models.IntegerField()
     genre = models.ManyToManyField(Genre)
 
 
@@ -82,8 +81,8 @@ class Review(models.Model):
     def __str__(self):
         return self.text
 
+
 class Comments(models.Model):
-    # title_id = models.ForeignKey(Titles, on_delete=models.CASCADE, related_name="comments")
     review_id = models.ForeignKey(Review, on_delete=models.CASCADE, related_name="comments")
     text = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
